@@ -29,7 +29,7 @@ def get_str_md5(content):
     :return:
     """
 
-    m = hashlib.md5(content.encode("unicode"))  # 创建md5对象
+    m = hashlib.md5(content.encode("gb2312"))  # 创建md5对象
     return m.hexdigest()
 
 
