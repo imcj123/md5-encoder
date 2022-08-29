@@ -17,7 +17,7 @@ width = 800
 height = 600
 
 
-class AboutMe(Frame):
+class AboutMePage(Frame):
     def __init__(self, master):
         super().__init__(master)
         self.place(width=width, height=height)
@@ -67,9 +67,10 @@ class Fill2MD5(Frame):
         Label(self, text='文件路径').grid()
         Entry(self, textvariable=self.select_path).grid()
         Button(self, text="选择多个文件", command=self.select_files).grid()
-        # Entry(self,textvariable=)
+        Button(self, text="转化！", command=self.file2md5).grid()
 
-        columns = ['No', 'File', 'md5']
+        self.file_path_list = []  # 需要转化的列表
+        columns = ['No', 'FilePath', 'State', 'md5']
         table = Treeview(
             master=self,
             height=10,
@@ -77,20 +78,33 @@ class Fill2MD5(Frame):
             show='headings'
         )
         table.heading('No', text='序号')
-        table.heading('File', text='文件路径')
+        table.heading('FilePath', text='文件路径')
+        table.heading('State', text='当前状态')
         table.heading('md5', text='md5值')
 
         table.column('No', width=50, anchor=S)
-        table.column('No', width=200)
-        table.column('No', width=200)
+        table.column('FilePath', width=200)
+        table.column('State', width=100)
+        table.column('md5', width=200)
 
         table.grid()
+        self.yscroll = Scrollbar(self, orient=VERTICAL)
+        self.yscroll.grid()
 
     def select_files(self):
         # 多个文件选择
-        selected_files_path = askopenfilenames()  # askopenfilenames函数选择多个文件
-        print(selected_files_path)
-        self.select_path.set('\n'.join(selected_files_path))  # 多个文件的路径用换行符隔开
+        selected_files_path = askopenfilenames()
+        if len(selected_files_path):
+            self.file_path_list = list(selected_files_path)  # 单纯只想要list，其实是多余的操作
+        else:
+            self.file_path_list = []  # 并没有选择文件
+        # # self.select_path.set('\n'.join(selected_files_path))  # 多个文件的路径用换行符隔开
+
+    def file2md5(self):
+        if len(self.file_path_list) == 0:
+            showinfo(title='错误', message='你没有输入文件')
+        md5_list = md.get_file_md5(self.file_path_list);
+        print(md5_list)
 
 
 if __name__ == '__main__':
@@ -134,7 +148,7 @@ if __name__ == '__main__':
     def aboutMeClict():
         text2.destroy()
         # text1.destory()
-        AboutMe(tk)
+        AboutMePage(tk)
 
 
     # text1.destroy()
